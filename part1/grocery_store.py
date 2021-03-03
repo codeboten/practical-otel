@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 # grocery_store_server.py
+import os
+
+import requests
+
 from flask import Flask
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor, ConsoleSpanExporter
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.exporter.jaeger import JaegerSpanExporter
 
 
@@ -22,12 +27,22 @@ trace.set_tracer_provider(provider)
 
 app = Flask(__name__)
 FlaskInstrumentor().instrument_app(app)
+RequestsInstrumentor().instrument()
 
 
 @app.route("/")
 def welcome():
     with trace.get_tracer(__name__).start_as_current_span("welcome message"):
         return "Welcome to the grocery store!"
+
+
+@app.route("/whats-in-store")
+def whats_in_store():
+    inventory_service = os.environ.get(
+        "INVENTORY_SERVICE_URL", "http://localhost:8080/inventory"
+    )
+    res = requests.get(inventory_service)
+    return res.text
 
 
 if __name__ == "__main__":
