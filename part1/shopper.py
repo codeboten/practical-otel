@@ -21,3 +21,5 @@ RequestsInstrumentor().instrument()
 with trace.get_tracer(__name__).start_as_current_span("going to the grocery store"):
     res = requests.get("http://localhost:5000")
     print(res.text)
+    res = requests.get("http://localhost:5000/whats-in-store")
+    print(res.text)
