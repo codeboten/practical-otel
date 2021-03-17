@@ -1,0 +1,29 @@
+    <%- include('partials/head') %>
+    
+<div class="jumbotron jumbotron-fluid px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <div class="container">
+        <h1 class="display-4">Food N' Stuff</h1>
+        <p class="lead">A place to buy all your food, and most of your stuff.</p>
+
+        </div>
+      </div>
+    
+    <main role="main" div class="container">
+        <div class="row">
+        <% for(let i of inventory){ %>
+            <div class="col-sm">
+                <div class="card mb-3" style="width: 18rem;">
+                    <img src="/<%=i.image%>" class="card-img-top" alt="...">
+                   <div class="card-body">
+                     <h5 class="card-title"><%=i.name%></h5>
+                        <p class="card-subtitle text-muted">$<%=i.price%></p>
+                    </div>
+                </div>
+            </div>
+            <%}%>
+        </div>
+
+</div>
+</main>
+
+<%- include('partials/footer') %> 
