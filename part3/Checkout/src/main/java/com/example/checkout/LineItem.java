@@ -1,4 +1,5 @@
-package com.example.Checkout;
+package com.example.checkout;
+
 import java.io.Serializable;
 import org.springframework.data.redis.core.RedisHash;
 

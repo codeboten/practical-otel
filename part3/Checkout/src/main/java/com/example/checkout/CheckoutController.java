@@ -1,7 +1,6 @@
-package com.example.Checkout;
+package com.example.checkout;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.context.ApplicationContext;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
