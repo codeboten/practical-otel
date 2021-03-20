@@ -23,3 +23,5 @@ with trace.get_tracer(__name__).start_as_current_span("going to the grocery stor
     print(res.text)
     res = requests.get("http://localhost:5000/whats-in-store")
     print(res.text)
+    res = requests.get("http://localhost:5000/checkout")
+    print(res.text)
