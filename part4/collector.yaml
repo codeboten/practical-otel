@@ -1,0 +1,19 @@
+receivers:
+  jaeger:
+    protocols:
+      thrift_compact:
+exporters:
+  jaeger:
+    endpoint: localhost:14250
+    insecure: true
+  zipkin:
+    endpoint: http://localhost:9411/api/v2/spans
+    format: proto
+  logging:
+    loglevel: debug
+
+service:
+  pipelines:
+    traces:
+      receivers: [jaeger]
+      exporters: [zipkin, jaeger, logging]
