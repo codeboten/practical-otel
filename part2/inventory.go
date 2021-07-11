@@ -11,18 +11,33 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/trace/jaeger"
 	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/sdk/resource"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
 func initTracer() {
 	otel.SetTextMapPropagator(propagation.TraceContext{})
 
-	_, err := jaeger.InstallNewPipeline(
-		jaeger.WithAgentEndpoint("localhost:6831"),
-		jaeger.WithProcess(jaeger.Process{ServiceName: "inventory"}),
+	exp, err := jaeger.New(
+		jaeger.WithAgentEndpoint(),
 	)
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
+	tp := tracesdk.NewTracerProvider(
+		tracesdk.WithBatcher(exp),
+		tracesdk.WithResource(resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceNameKey.String("inventory"),
+		)),
+	)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	otel.SetTracerProvider(tp)
 }
 
 type Product struct {
