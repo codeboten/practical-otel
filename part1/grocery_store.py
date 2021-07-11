@@ -8,20 +8,18 @@ from flask import Flask
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor, ConsoleSpanExporter
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
-from opentelemetry.exporter.jaeger import JaegerSpanExporter
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 
 
 exporter = ConsoleSpanExporter()
 resource = Resource.create({"service.name": "grocery-store"})
 provider = TracerProvider(resource=resource)
-span_processor = BatchExportSpanProcessor(exporter)
+span_processor = BatchSpanProcessor(exporter)
 provider.add_span_processor(span_processor)
-provider.add_span_processor(
-    BatchExportSpanProcessor(JaegerSpanExporter("grocery-store"))
-)
+provider.add_span_processor(BatchSpanProcessor(JaegerExporter()))
 trace.set_tracer_provider(provider)
 
 
@@ -61,4 +59,4 @@ def checkout():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0")
