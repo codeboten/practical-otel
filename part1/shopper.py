@@ -2,6 +2,7 @@
 # grocery_store_client.py
 import os
 import requests
+import time
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -33,4 +34,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    while 1:
+        time.sleep(1)
+        main()
