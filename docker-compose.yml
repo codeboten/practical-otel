@@ -1,0 +1,57 @@
+version: "3.9"
+services:
+  shopper:
+    build: part1/
+    command: "/app/shopper.py"
+    depends_on:
+      - collector
+      - store
+    environment:
+      OTEL_EXPORTER_JAEGER_AGENT_HOST: collector
+      STORE_URL: http://store:5000
+  store:
+    build: part1/
+    depends_on:
+      - collector
+      - inventory
+    environment:
+      OTEL_EXPORTER_JAEGER_AGENT_HOST: collector
+      INVENTORY_SERVICE_URL: http://inventory:8080/inventory
+      CHECKOUT_SERVICE_URL: http://checkout:8083/orders
+  inventory:
+    build: part2/
+    depends_on:
+      - collector
+      - checkout
+    environment:
+      OTEL_EXPORTER_JAEGER_AGENT_HOST: collector
+      OTEL_EXPORTER_JAEGER_AGENT_PORT: 6831
+  checkout:
+    build: part3/
+    depends_on:
+      - collector
+      - redis
+    environment:
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://collector:14250
+      OTEL_TRACES_EXPORTER: jaeger
+  collector:
+    image: otel/opentelemetry-collector:0.27.0
+    volumes:
+      - ${PWD}/part4/collector-compose-example.yaml:/etc/collector.yaml
+    command:
+      - "--config=/etc/collector.yaml"
+    depends_on:
+      - jaeger
+      - zipkin
+  # tracing backends
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - "0.0.0.0:16686:16686"
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "0.0.0.0:9411:9411"
+  # data store
+  redis:
+    image: redis

@@ -1,0 +1,20 @@
+receivers:
+  jaeger:
+    protocols:
+      thrift_compact:
+      grpc:
+exporters:
+  jaeger:
+    endpoint: jaeger:14250
+    insecure: true
+  zipkin:
+    endpoint: http://zipkin:9411/api/v2/spans
+    format: proto
+  logging:
+    loglevel: debug
+
+service:
+  pipelines:
+    traces:
+      receivers: [jaeger]
+      exporters: [zipkin, jaeger, logging]
