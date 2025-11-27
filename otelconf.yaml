@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/open-telemetry/opentelemetry-configuration/refs/heads/main/opentelemetry_configuration.json
+
+file_format: "1.0"
+log_level: info
+
+tracer_provider:
+  processors:
+    - batch:
+        exporter:
+          otlp_http:
+            endpoint: http://localhost:4318
+
+logger_provider:
+  processors:
+    - batch:
+        exporter:
+          otlp_grpc:
+            endpoint: localhost:4317
+            tls:
+              insecure: true
+
+meter_provider:
+  readers:
+    - periodic:
+        exporter:
+          otlp_http:
+            endpoint: http://localhost:4318
+
+resource:
+  attributes:
+    - name: "my-attribute"
+      value: "super important
